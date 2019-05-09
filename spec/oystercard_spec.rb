@@ -35,11 +35,6 @@ describe Oystercard do
       subject.top_up(min_fare / 2)
       expect { subject.touch_in(station) }.to raise_error message
     end
-
-    it 'should store the entry station somewhere' do
-      top_up_touch_in
-      expect(subject.entry_station).to eq(station)
-    end
   end
 
   describe '#touch_out' do
