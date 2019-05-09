@@ -31,16 +31,17 @@ describe Oystercard do
   end
 
   describe '#touch_out' do
-    it 'should cause in_journey? to be false' do
+    before(:each) do
       subject.top_up(min_fare)
       subject.touch_in
+    end
+
+    it 'should cause in_journey? to be false' do
       subject.touch_out
       expect(subject.in_journey?).to eq(false)
     end
 
     it 'should reduce the balance by the minimum fare' do
-      subject.top_up(min_fare)
-      subject.touch_in
       expect { subject.touch_out }.to change { subject.balance }.by -(min_fare)
     end
   end
