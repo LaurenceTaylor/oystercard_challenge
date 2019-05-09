@@ -1,8 +1,8 @@
 class Oystercard
-  attr_reader :balance, :entry_station
-
   MAXIMUM_CAPACITY = 90
   MINIMUM_FARE = 1
+
+  attr_reader :balance, :entry_station
 
   def initialize
     @balance = 0
@@ -15,7 +15,7 @@ class Oystercard
   end
 
   def touch_in(station)
-    fail "you don't have enough funds for a journey" if enough_money?
+    fail "you don't have enough funds for a journey" unless enough_money?
     @entry_station = station
   end
 
@@ -34,7 +34,7 @@ class Oystercard
   end
 
   def enough_money?
-    @balance < MINIMUM_FARE
+    @balance >= MINIMUM_FARE
   end
 
   def deduct(money)
