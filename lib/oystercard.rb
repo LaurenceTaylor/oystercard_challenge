@@ -2,25 +2,28 @@ class Oystercard
   MAXIMUM_CAPACITY = 90
   MINIMUM_FARE = 1
 
-  attr_reader :balance, :entry_station
+  attr_reader :balance, :entry_station, :journey_history
 
   def initialize
     @balance = 0
     @entry_station = nil
+    @journey_history = []
   end
 
   def top_up(money)
-    fail "you have reached top up capacity of £#{MAXIMUM_CAPACITY}" if full?
+    fail "top up capacity hit: £#{MAXIMUM_CAPACITY}" if full?(money)
     @balance += money
   end
 
   def touch_in(station)
     fail "you don't have enough funds for a journey" unless enough_money?
+    @journey_history << { station => nil }
     @entry_station = station
   end
 
-  def touch_out
+  def touch_out(station)
     deduct(MINIMUM_FARE)
+    @journey_history.last[@entry_station] = station
     @entry_station = nil
   end
 
@@ -29,8 +32,8 @@ class Oystercard
   end
 
   private
-  def full?
-    @balance >= MAXIMUM_CAPACITY
+  def full?(money)
+    @balance + money > MAXIMUM_CAPACITY
   end
 
   def enough_money?

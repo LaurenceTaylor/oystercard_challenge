@@ -5,6 +5,7 @@ describe Oystercard do
   min_fare = Oystercard::MINIMUM_FARE
 
   let(:station) { double('station') }
+  let(:exit_station) { double('exit station') }
 
   def top_up_touch_in
     subject.top_up(Oystercard::MINIMUM_FARE)
@@ -17,7 +18,7 @@ describe Oystercard do
     end
 
     it "should have a maximum capacity of #{max_capacity}" do
-      message = "you have reached top up capacity of £#{max_capacity}"
+      message = "top up capacity hit: £#{max_capacity}"
       subject.top_up(max_capacity)
       expect { subject.top_up(min_fare) }.to raise_error message
     end
@@ -47,12 +48,24 @@ describe Oystercard do
     end
 
     it 'should cause in_journey? to be false' do
-      subject.touch_out
+      subject.touch_out(exit_station)
       expect(subject.in_journey?).to eq(false)
     end
 
     it 'should reduce the balance by the minimum fare' do
-      expect { subject.touch_out }.to change { subject.balance }.by -(min_fare)
+      expect { subject.touch_out(exit_station) }.to change { subject.balance }.by -(min_fare)
+    end
+  end
+
+  describe '#journey_history' do
+    it 'should have no journeys by default' do
+      expect(subject.journey_history).to eq([])
+    end
+
+    it 'should store journeys (hashes of entry_station and exit_station)' do
+      top_up_touch_in
+      subject.touch_out(exit_station)
+      expect(subject.journey_history).to eq([station => exit_station])
     end
   end
 end
